@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Manager {
+  id String  @id @unique @default(uuid())
+  userName String @unique @map("user_name")
+  password String
+  nickName String? @map("nick_name")
+  avatar String?
+  createdAt DateTime @default(now()) @map("create_at")
+  updateAt DateTime @updatedAt @map("updated_at")
+
+  @@map("managers")
+}
+
+// 文章分类
+model ArticleCategory {
+  id        String    @id @unique @default(uuid())
+  name      String
+  desc      String?   // Add description field (optional)
+  content   String?   @db.Text // Make content optional and use Text type
+  img       String?   // Add image field (optional)
+  createdAt DateTime  @default(now()) @map("create_at")
+  updateAt  DateTime  @updatedAt @map("updated_at")
+  articles  Article[] // Add relation field to Article model (plural name is conventional)
+
+  @@map("article_categories")
+}
+
+// 文章信息
+model Article {
+  id                String  @id @unique @default(uuid())
+  title             String
+  desc              String?
+  content           String? @db.Text // Use @db.Text for potentially long content
+  coverImage        String? @map("cover_image")
+  views             Int     @default(0) // 浏览次数
+  link              String? // 链接
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at") 
+  articleCategoryId String?  @map("article_category_id") // Foreign key field
+
+  // Relation field to ArticleCategory
+  articleCategory   ArticleCategory? @relation(fields: [articleCategoryId], references: [id]) // 表关联
+
+  @@map("articles") // Map model to "articles" table
+}
+
+// 预约信息
+model Reservation {
+  id             String   @id @unique @default(uuid())
+  title          String?
+  desc           String?
+  content        String?  @db.Text
+  coverImage     String?  @map("cover_image")
+  views          Int      @default(0)
+  link           String?
+  maxCount       Int      @default(10) @map("max_count") // 最大预约人数
+  startDate      DateTime? @map("start_date") // 可以预约的时间
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  reservationLogs ReservationLog[] // Relation field to ReservationLog
+
+  @@map("reservations")
+}
+
+// 预约人记录
+model ReservationLog {
+  id            String      @id @unique @default(uuid())
+  name          String      // 名字
+  mobile        String      // 手机号
+  address       String?     // 地址
+  cardId        String?     @map("card_id") // 身份证信息
+  status        Int         @default(0) // 0 未使用, 1 已使用
+  startDate     DateTime?   @map("start_date") // 可以预约的时间
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  reservationId String?     @map("reservation_id") // Foreign key field
+  userId        String?     @map("user_id") // Foreign key field for User
+
+  // Relation field to Reservation
+  reservation   Reservation? @relation(fields: [reservationId], references: [id]) // 预约信息
+  // Relation field to User
+  user          User?        @relation(fields: [userId], references: [id]) // 用户信息
+
+  @@map("reservation_logs")
+}
+
+// 用户信息 (Assuming this is a general user, not the same as Manager)
+model User {
+  id             String   @id @unique @default(uuid())
+  userName       String   @unique @map("user_name")
+  password       String
+  nickName       String?  @map("nick_name")
+  avatar         String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  reservationLogs ReservationLog[] // Relation field back to ReservationLog
+
+  @@map("users")
+}
+

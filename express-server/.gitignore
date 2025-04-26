@@ -2,7 +2,7 @@
 node_modules
 lib
 report.html
-
+generated
 # Log files
 npm-debug.log*
 yarn-debug.log*
