@@ -11,7 +11,7 @@
  */
 const router = require('express').Router();
 const {prisma} = require('../../db');
-const { parseData,encodePwd,comparePwd } = require('../../utils/tools');
+const { parseData,encodePwd,comparePwd, getUserIdFromToken } = require('../../utils/tools');
 /*
  * 列表 分页形式
  */
@@ -124,7 +124,19 @@ router.put('/:id/reset_pwd', async function(req,res,next){
  * Todo: 实现登录功能后
  */
 router.get('/info', async function(req,res,next){
+    try{
+        const id = getUserIdFromToken(req.headers.authorization.split(' ')[1]); // token中的用户id
+        let result = await prisma.manager.findFirst({
+            where: {
+                id: id
+            }
+        })
+        delete result.password;
+        return res.json(parseData(result,true,'获取成功'))  
 
+    }catch (error) {
+        next(error);
+    }
 })
 /**
  * 获取单个记录,不包含密码

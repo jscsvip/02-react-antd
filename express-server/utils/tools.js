@@ -60,7 +60,7 @@ function parseData(data = {}, success= true,message = '',code = '200') {
     code
   }
 }
-console.log(process.env.SECRET_KEY);
+// console.log(process.env.SECRET_KEY);
 const secretKey = process.env.SECRET_KEY // 从环境变量获取密钥，如果未设置则使用默认值
   // 替换为你的密钥
 // 生成token
@@ -70,11 +70,24 @@ async function generateToken(user) {
   const payload = { userId: user.id }; // 自定义负载
   return jwt.sign(payload, secretKey, options);
 }
-
+/**
+ * 
+ * @param {*} token 
+ * @returns 解析出来的userId
+ */
+function getUserIdFromToken(token) {
+  try {
+    return jwt.verify(token, secretKey).userId
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return null;
+  }
+}
 
 module.exports = {
   parseData,
   encodePwd,
   comparePwd,
-  generateToken
+  generateToken,
+  getUserIdFromToken
 }
