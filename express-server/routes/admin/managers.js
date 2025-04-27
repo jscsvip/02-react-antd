@@ -38,7 +38,7 @@ router.get('/', async function(req,res,next){
             page:page*1,
             pages: Math.ceil(count/per), //总页数
             per:per*1,
-            count
+            total:count
             },true,'获取成功')
         )
     }catch (error) {

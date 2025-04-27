@@ -1,12 +1,12 @@
-const { parseData, comparePwd } = require('../../../utils/tools');
+const { parseData, comparePwd, generateToken } = require('../../../utils/tools');
 const { prisma } = require('../../../db');
 const router = require('express').Router();
-router.post('/admin_login', (req, res, next) => {
-  const { username, password } = req.body;
-  if (username&& password ) {
-    const manager = prisma.manager.findFirst({
+router.post('/admin_login', async (req, res, next) => {
+  const { userName, password } = req.body;
+  if (userName&& password ) {
+    const manager = await prisma.manager.findFirst({
       where: {
-        username: username,
+        userName: userName,
       }
     });
     if (manager) {
@@ -14,8 +14,9 @@ router.post('/admin_login', (req, res, next) => {
             // 密码正确,生成token
             // 使用jwt插件
             if(result){
-                delete manager.password;
-                res.json(parseData(manager, true, '登录成功'));
+                generateToken(manager).then(token=>{
+                    res.json(parseData(token, true, '登录成功'));
+                })
             }else{
                 res.json(parseData('密码错误', false, '请重新填写正确的密码'));
             }

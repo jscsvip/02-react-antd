@@ -24,6 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/v1/common', require('./routes/api/v1/common'));
+// 登录注册
+app.use('/api/v1/auth', require('./routes/api/v1/auth'));
 app.use('/api/v1/admin/managers', require('./routes/admin/managers'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
