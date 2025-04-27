@@ -29,7 +29,10 @@ router.get('/', async function(req,res,next){
         }
     })
     return res.json(parseData({
-        data:list,
+        data:list.map(item=>{ //删除密码
+            delete item.password;
+            return item;
+        }),
         page,
         pages: Math.ceil(count/per), //总页数
         per,
@@ -42,7 +45,20 @@ router.get('/', async function(req,res,next){
  * 新增
  */
 router.post('/', async function(req,res,next){
-
+    let {userName,nickName,password,avatar} = req.body;
+    if (!userName || !password) {
+        return res.json(parseData(null,false,'用户名和密码不能为空'));
+    }
+    let pwd = await encodePwd(password);
+    let result = await prisma.manager.create({
+        data: {
+            userName,
+            nickName,
+            avatar,
+            password: pwd
+        }
+    })
+    return res.json(parseData(result,true,'添加成功'))
 })
 
 /*

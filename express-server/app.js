@@ -42,7 +42,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-
+// 初始化管理员
 async function initDbData() {
   const countAdmin = await prisma.manager.count({
     where: {
