@@ -5,7 +5,7 @@ npm i nodemon -D
  npm i prisma -D
 npx prisma init --datasource-provider mysql
 npx prisma db push
-
+npx prisma generate
 
 ## 提问
 nodejs实现文件上传功能,如何处理
