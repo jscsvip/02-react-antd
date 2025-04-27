@@ -148,14 +148,40 @@ router.get('/:id', async function(req,res,next){
  * 例如 ?ids=1,2,3
  */
 router.delete('/delete_many', async function(req,res,next){
-
+    try{
+        let {ids} = req.query;
+        if (!ids) {
+            return res.json(parseData(null,false,'参数不能为空'));
+        }
+        let arr = ids.split(',');
+        let {count} = await prisma.manager.deleteMany({
+            where: {
+                id: {
+                    in: arr
+                }
+            }
+        })
+        return res.json(parseData(count,true,'删除多条成功'))
+    }catch (error) {
+        next(error);
+    }
 })
 
 /*
  * 删除单个 根据id
  */
 router.delete('/:id', async function(req,res,next){
-
+    try{
+        let {id} = req.params;
+        let result = await prisma.manager.delete({
+            where: {
+                id: id
+            }
+        })
+        return res.json(parseData(result,true,'删除成功'))
+    }catch (error) {
+        next(error);
+    }
 })
 
 
