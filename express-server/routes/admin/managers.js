@@ -70,14 +70,48 @@ router.post('/', async function(req,res,next){
  * 修改 根据id
  */
 router.put('/:id', async function(req,res,next){
-
+    try{
+        let {id} = req.params;
+        let {userName,nickName,avatar} = req.body;
+        let result = await prisma.manager.update({
+            where: {
+                id: id
+            },
+            data: {
+                userName,
+                nickName,
+                avatar
+            }
+        })
+        return res.json(parseData(result,true,'修改成功'))
+    }catch (error) {
+        next(error);
+    }
 })  
 
 /*
  * 修改密码 根据id
  */
 router.put('/:id/reset_pwd', async function(req,res,next){
-
+    try{
+        let {id} = req.params;
+        let {password} = req.body;
+        if (!password) {
+            return res.json(parseData(null,false,'密码不能为空'));
+        }
+        let pwd = await encodePwd(password);
+        let result = await prisma.manager.update({
+            where: {
+                id: id
+            },
+            data: {
+                password: pwd
+            }
+        })
+        return res.json(parseData(result,true,'修改成功'))
+    }catch (error) {
+        next(error);
+    }
 })
 
 /**

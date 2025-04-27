@@ -46,12 +46,12 @@ async function comparePwd(plainPassword, hashedPassword) {
 }
 
 // 统一返回格式
-function parseData(data = {}, success= true,message = '',errorCode = '') {
+function parseData(data = {}, success= true,message = '',code = '200') {
   return {
     data,
     success,
     message,
-    errorCode
+    code
   }
 }
 
