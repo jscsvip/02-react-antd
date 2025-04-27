@@ -16,30 +16,35 @@ const { parseData,encodePwd,comparePwd } = require('../../utils/tools');
  * 列表 分页形式
  */
 router.get('/', async function(req,res,next){
-    const {page=1,per=10} = req.query;  //?page=2&per=10
+    try{
+        const {page=1,per=10} = req.query;  //?page=2&per=10
 
-    const count = await prisma.manager.count(); //获取总条数
-    const list = await prisma.manager.findMany({
-        skip: (page*1-1)*per,
-        take: per*1,  //每页条数
-        where: {
-            // is_delete: 0
-        },
-        orderBy: {
-            createdAt: 'desc'
-        }
-    })
-    return res.json(parseData({
-        data:list.map(item=>{ //删除密码
-            delete item.password;
-            return item;
-        }),
-        page,
-        pages: Math.ceil(count/per), //总页数
-        per,
-        count
-    },true,'获取成功')
-)
+        const count = await prisma.manager.count(); //获取总条数
+        const list = await prisma.manager.findMany({
+            skip: (page*1-1)*per,
+            take: per*1,  //每页条数
+            where: {
+                // is_delete: 0
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
+        return res.json(parseData({
+            data:list.map(item=>{ //删除密码
+                delete item.password;
+                return item;
+            }),
+            page,
+            pages: Math.ceil(count/per), //总页数
+            per,
+            count
+            },true,'获取成功')
+        )
+    }catch (error) {
+        next(error);
+    }
+    
 })
 
 /*
