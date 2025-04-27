@@ -35,9 +35,9 @@ router.get('/', async function(req,res,next){
                 delete item.password;
                 return item;
             }),
-            page,
+            page:page*1,
             pages: Math.ceil(count/per), //总页数
-            per,
+            per:per*1,
             count
             },true,'获取成功')
         )
