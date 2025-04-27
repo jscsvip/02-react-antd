@@ -116,7 +116,7 @@ router.put('/:id/reset_pwd', async function(req,res,next){
 
 /**
  * 获取当前用户的登录信息,需要token
- * 
+ * Todo: 实现登录功能后
  */
 router.get('/info', async function(req,res,next){
 
@@ -126,6 +126,18 @@ router.get('/info', async function(req,res,next){
  * 
  */
 router.get('/:id', async function(req,res,next){
+    try{
+        let {id} = req.params;
+        let result = await prisma.manager.findFirst({
+            where: {
+                id: id
+            }
+        })
+        delete result.password;
+        return res.json(parseData(result,true,'获取成功'))
+    }catch (error) {
+        next(error);
+    }
 
 })
 
