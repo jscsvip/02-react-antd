@@ -1,3 +1,5 @@
+require('dotenv').config(); // <-- 添加这一行来加载 .env 文件
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -21,11 +23,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const jwtCheck = require("express-jwt").expressjwt({
+  secret: process.env.SECRET_KEY ,
+  algorithms: ["HS256"], // 指定用于验证签名的算法，必须与签名时使用的算法一致
+})
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/v1/common', require('./routes/api/v1/common'));
 // 登录注册
 app.use('/api/v1/auth', require('./routes/api/v1/auth'));
+app.use('/api/v1/admin/*', jwtCheck);
 app.use('/api/v1/admin/managers', require('./routes/admin/managers'));
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

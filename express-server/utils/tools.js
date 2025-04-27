@@ -60,8 +60,9 @@ function parseData(data = {}, success= true,message = '',code = '200') {
     code
   }
 }
-
-const secretKey = 'your_secret_key'; // 替换为你的密钥
+console.log(process.env.SECRET_KEY);
+const secretKey = process.env.SECRET_KEY // 从环境变量获取密钥，如果未设置则使用默认值
+  // 替换为你的密钥
 // 生成token
 
 async function generateToken(user) {
