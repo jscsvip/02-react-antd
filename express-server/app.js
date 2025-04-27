@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const { encodePwd } = require('./utils/tools');
+const { encodePwd, parseData } = require('./utils/tools');
 
 var app = express();
 const {prisma} = require('./db');
@@ -38,7 +38,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  // res.render('error');
+  res.json(parseData(err.message, false, 'error', err.status||500));
 });
 
 

@@ -11,16 +11,17 @@
  */
 const router = require('express').Router();
 const {prisma} = require('../../db');
-const { parseData } = require('../../utils/tools');
+const { parseData,encodePwd,comparePwd } = require('../../utils/tools');
 /*
  * 列表 分页形式
  */
 router.get('/', async function(req,res,next){
     const {page=1,per=10} = req.query;  //?page=2&per=10
+
     const count = await prisma.manager.count(); //获取总条数
     const list = await prisma.manager.findMany({
-        skip: (page-1)*per,
-        take: per,  //每页条数
+        skip: (page*1-1)*per,
+        take: per*1,  //每页条数
         where: {
             // is_delete: 0
         },
@@ -45,20 +46,24 @@ router.get('/', async function(req,res,next){
  * 新增
  */
 router.post('/', async function(req,res,next){
-    let {userName,nickName,password,avatar} = req.body;
-    if (!userName || !password) {
-        return res.json(parseData(null,false,'用户名和密码不能为空'));
-    }
-    let pwd = await encodePwd(password);
-    let result = await prisma.manager.create({
-        data: {
-            userName,
-            nickName,
-            avatar,
-            password: pwd
+    try {
+        let {userName,nickName,password,avatar} = req.body;
+        if (!userName || !password) {
+            return res.json(parseData(null,false,'用户名和密码不能为空'));
         }
-    })
-    return res.json(parseData(result,true,'添加成功'))
+        let pwd = await encodePwd(password);
+        let result = await prisma.manager.create({
+            data: {
+                userName,
+                nickName,
+                avatar,
+                password: pwd
+            }
+        })
+        return res.json(parseData(result,true,'添加成功'))
+    }catch (error) {
+       next(error); 
+    }
 })
 
 /*
