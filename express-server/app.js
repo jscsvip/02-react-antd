@@ -35,6 +35,9 @@ app.use('/api/v1/common', require('./routes/api/v1/common'));
 app.use('/api/v1/auth', require('./routes/api/v1/auth'));
 app.use('/api/v1/admin/*', jwtCheck);
 app.use('/api/v1/admin/managers', require('./routes/admin/managers'));
+
+app.use('/api/v1/admin/article_categories', require('./routes/admin/article_categories'));
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
