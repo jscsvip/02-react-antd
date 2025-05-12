@@ -24,6 +24,9 @@ router.get('/', async function(req,res,next){
             where: {
                 // is_delete: 0
             },
+            include:{
+                articleCategory: true
+            },
             orderBy: {
                 createdAt: 'desc'
             }
@@ -89,6 +92,9 @@ router.get('/:id', async function(req,res,next){
         let result = await prisma.article.findFirst({
             where: {
                 id: id
+            },
+            include:{
+                articleCategory: true
             }
         })
         return res.json(parseData(result,true,'获取成功'))
