@@ -1,8 +1,8 @@
 /**
  * 列表 分页形式
  *     名字手机号查询
- *      用户id查找
- *      分类id查找
+ *      用户id查找,主要是用在用户列表上的查看预约记录功能
+ *      预约id查找,主要用在预约记录列表上的查看预约记录功能
  * 新增
  * 修改
  * 获取单条记录
@@ -18,17 +18,36 @@ const { parseData,encodePwd,comparePwd, getUserIdFromToken } = require('../../ut
  */
 router.get('/', async function(req,res,next){
     try{
-        const {page=1,per=10} = req.query;  //?page=2&per=10
+        const {page=1,per=10,name,mobile,uid:userId,rid} = req.query;  //?page=2&per=10
+        const query = {}
+        if(name){
+            query.name = {
+                contains: name
+            }
+        }
+        if(mobile){
+            query.mobile = {
+                contains: mobile
+            }
+        }
+        if(userId){
+            query.userId = userId
+        }
+        if(rid){
+            query.reservationId = rid
+        }
 
-        const count = await prisma.reservationLog.count(); //获取总条数
+        const count = await prisma.reservationLog.count({where:query}); //获取总条数
         const list = await prisma.reservationLog.findMany({
             skip: (page*1-1)*per,
             take: per*1,  //每页条数
-            where: {
-                // is_delete: 0
-            },
+            where: query,
             orderBy: {
                 createdAt: 'desc'
+            },
+            include: { //关联查询 预约信息 与 用户信息
+                reservation: true,
+                user: true
             }
         })
         return res.json(parseData({
@@ -92,6 +111,10 @@ router.get('/:id', async function(req,res,next){
         let result = await prisma.reservationLog.findFirst({
             where: {
                 id: id
+            },
+            include: { //关联查询 预约信息 与 用户信息
+                reservation: true,
+                user: true
             }
         })
         return res.json(parseData(result,true,'获取成功'))
