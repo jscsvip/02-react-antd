@@ -6,7 +6,7 @@
  */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const qrcode = require('qrcode');
 const saltRounds = 10; // 加盐轮数，可以根据需要调整
 
 /**
@@ -83,11 +83,22 @@ function getUserIdFromToken(token) {
     return null;
   }
 }
+// 生成二维码
+function generateQRCode(data,cb) {
+  qrcode.toDataURL(data,{},(err,url)=>{
+    if(err){
+      console.error('Error generating QR code:', err);
+      return cb(err);
+    }
+    return cb(url)
+  });
+}
 
 module.exports = {
   parseData,
   encodePwd,
   comparePwd,
   generateToken,
-  getUserIdFromToken
+  getUserIdFromToken,
+  generateQRCode
 }

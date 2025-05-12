@@ -8,7 +8,7 @@ const router = require('express').Router();
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const { parseData } = require('../../../utils/tools');
+const { parseData,generateQRCode } = require('../../../utils/tools');
 if(!fs.existsSync(path.join(__dirname, '../../../public/uploads'))){
   fs.mkdirSync(path.join(__dirname, '../../../public/uploads'), { recursive: true });
 }
@@ -32,7 +32,12 @@ router.post('/upload', upload.single('file'),(req, res) => {
     // 获取上传之后的文件名输出
     res.json(parseData('/uploads/'+req.file.filename));
 });
-
-
+// 生成二维码
+router.get('/qrcode',(req,res)=>{
+  const {data} = req.query;
+  generateQRCode(data,(url)=>{
+    res.json(parseData(url));
+  })
+})
 
 module.exports = router;
