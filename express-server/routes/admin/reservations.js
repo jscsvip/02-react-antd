@@ -60,7 +60,11 @@ router.post('/', async function(req,res,next){
     try {
         let data = req.body;
         let result = await prisma.reservation.create({
-            data
+            data:{
+                ...data,
+                maxCount:data.maxCount*1 ||10,  // 数据格式化
+                startDate: new Date(data.startDate),
+            }
         })
         return res.json(parseData(result,true,'添加成功'))
     }catch (error) {
@@ -73,6 +77,12 @@ router.post('/', async function(req,res,next){
  */
 router.put('/:id', async function(req,res,next){
     try{
+        if(req.body.startDate){
+            req.body.startDate = new Date(req.body.startDate);   
+        }
+        if(req.body.maxCount){
+            req.body.maxCount = req.body.maxCount*1 || 10;
+        }
         let {id} = req.params;
         let data= req.body;
         let result = await prisma.reservation.update({
