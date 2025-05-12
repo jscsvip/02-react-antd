@@ -12,7 +12,8 @@ const { encodePwd, parseData } = require('./utils/tools');
 
 var app = express();
 const {prisma} = require('./db');
-
+const cors = require('cors');
+app.use(cors());  // 允许所有来源的请求,解决跨域问题
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
