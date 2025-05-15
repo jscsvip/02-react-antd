@@ -153,4 +153,8 @@ export default defineConfig({
   },
   esbuildMinifyIIFE: true,
   requestRecord: {},
+  // 用来添加自定义 环境变量
+  define:{
+    SERVER_URL: ''
+  }
 });

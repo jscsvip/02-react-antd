@@ -145,6 +145,10 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      {/* 
+        读取环境变量定义在config/config.dev.ts
+        <h1>{SERVER_URL}</h1> 
+      */}
       <Helmet>
         <title>
           {intl.formatMessage({
@@ -166,9 +170,9 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
+          logo={<img alt="logo" src="/logo1.svg" />}
+          title="预约系统"
+          subTitle="一个基于antd-pro的后台管理系统"
           initialValues={{
             autoLogin: true,
           }}
