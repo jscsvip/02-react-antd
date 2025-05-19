@@ -14,6 +14,7 @@ import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createStyles } from 'antd-style';
+import { setToken } from '@/utils/tools';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -35,7 +36,6 @@ const useStyles = createStyles(({ token }) => {
  
 
 const Login: React.FC = () => {
-  const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const intl = useIntl();
@@ -58,6 +58,11 @@ const Login: React.FC = () => {
       const msg = await loginAPI({userName:values.username!,password:values.password! });
       if(msg.success){
         message.success("登录成功");
+        setToken(msg.data) 
+          await fetchUserInfo();
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+          return;
       }
       // if (msg.status === 'ok') {
       //   const defaultLoginSuccessMessage = intl.formatMessage({

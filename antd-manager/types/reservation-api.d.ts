@@ -7,6 +7,7 @@ declare namespace RAPI {
   type ApiResult = {
     data: any;
     success: boolean;
-    errorMessage: string;
+    message: string;
+    code: string;
   };
 }
