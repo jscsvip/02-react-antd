@@ -29,22 +29,61 @@ export default [
     component: './Welcome',
   },
   {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
+    path: '/articles',
+    name: 'articles',
+    icon: 'crown', // 您图片中使用的 'crown'，可以根据需要修改
     routes: [
       {
-        path: '/admin',
-        redirect: '/admin/sub-page',
+        path: '/articles',
+        redirect: '/articles/list', // 重定向到子路由
       },
       {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
+        path: '/articles/categories',
+        name: 'categories',
+        component: './articles/categories', // 确保这个路径下有对应的组件文件
+      },
+      {
+        path: '/articles/list',
+        name: 'list',
+        component: './articles/list', // 确保这个路径下有对应的组件文件
       },
     ],
   },
+  {
+    path: '/reservations',
+    name: 'reservations',
+    icon: 'schedule', // 您可以为这个菜单项选择一个合适的图标
+    component: './reservations/index', // 确保 src/pages/reservations/index.tsx 或 .js 文件存在
+  },
+  {
+    path: '/managers',
+    name: 'managers',
+    icon: 'solution', // 您可以为这个菜单项选择一个合适的图标
+    component: './managers/index', // 确保 src/pages/managers/index.tsx 或 .js 文件存在
+  },
+  {
+    path: '/users',
+    name: 'users',
+    icon: 'team', // 您可以为这个菜单项选择一个合适的图标
+    component: './users/index', // 确保 src/pages/users/index.tsx 或 .js 文件存在
+  },
+  // {
+  //   path: '/admin',
+  //   name: 'admin',
+  //   icon: 'crown',
+  //   access: 'canAdmin',
+  //   routes: [
+  //     {
+  //       path: '/admin',
+  //       redirect: '/admin/sub-page',
+  //     },
+  //     {
+  //       path: '/admin/sub-page',
+  //       name: 'sub-page',
+  //       component: './Admin',
+  //     },
+  //   ],
+  // },
   {
     name: 'list.table-list',
     icon: 'table',
