@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageContainer, ProTable, ProColumns } from '@ant-design/pro-components';
+import { PageContainer, ProTable, ProColumns,ModalForm } from '@ant-design/pro-components';
 import { loadDataAPI } from '@/services/article-categories';
 import { Button, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -12,6 +12,7 @@ type DataType = {
 }
 
 function ArticleCategories() {
+    const [isShowEdit, setIsShowEdit] = React.useState(false);
     const column: ProColumns<DataType>[] = [
         {
             title: '序号',
@@ -68,12 +69,29 @@ function ArticleCategories() {
         },
     ]
     return <PageContainer>
+        <ModalForm title="编辑" 
+            open={isShowEdit}
+            onOpenChange={setIsShowEdit}
+            modalProps={{
+                maskClosable: false,
+                destroyOnClose: true,
+                width: 600,
+            }}
+        ></ModalForm>
         <ProTable
             rowKey="id"
             columns={column}
             request={loadDataAPI}
             headerTitle={
-                <Button type="primary" icon={<PlusOutlined/>} size='small'>新增</Button>
+                <Button 
+                type="primary" 
+                icon={<PlusOutlined/>} 
+                size='small' 
+                onClick={
+                    () => {
+                        setIsShowEdit(true);
+                    }
+                }>新增</Button>
             }
             toolBarRender={() => []}
             options={{
