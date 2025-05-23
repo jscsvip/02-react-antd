@@ -1,7 +1,7 @@
-import React from 'react';
-import { PageContainer, ProTable, ProColumns,ModalForm } from '@ant-design/pro-components';
-import { loadDataAPI } from '@/services/article-categories';
-import { Button, Popconfirm, Space } from 'antd';
+import React, { useRef } from 'react';
+import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType } from '@ant-design/pro-components';
+import { loadDataAPI, addModelAPI } from '@/services/article-categories';
+import { Button, message, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 type DataType = {
@@ -12,6 +12,7 @@ type DataType = {
 }
 
 function ArticleCategories() {
+    const actionRef = useRef<ActionType>(null); //用来绑定表单的内置事件
     const [isShowEdit, setIsShowEdit] = React.useState(false);
     const column: ProColumns<DataType>[] = [
         {
@@ -24,7 +25,13 @@ function ArticleCategories() {
                 第二个参数：当前行的数据
                 第三个参数：当前行的索引                
             */
-            renderText: (text, record, index) => {
+            renderText: (text, record, index, action) => {
+                // 根据当前页码和每页条数计算实际序号
+                const pageInfo = action?.pageInfo;
+                if (pageInfo) {
+                    const { current, pageSize } = pageInfo;
+                    return (current - 1) * pageSize + index + 1;
+                }
                 return index + 1;
             }
         },
@@ -77,11 +84,48 @@ function ArticleCategories() {
                 destroyOnClose: true,
                 width: 600,
             }}
-        ></ModalForm>
+            onFinish={
+                async (values) => {
+                    console.log(values);
+                    addModelAPI(values).then((res) => {
+                        console.log(res);
+                        setIsShowEdit(false);
+                        message.success('添加成功');
+                        // 刷新表格
+                        actionRef.current?.reload();
+                    });
+                }
+            }
+        >
+            {/* <ProForm
+                labelCol={{ span: 4 }}
+                onFinish={
+                    (values) => {
+                        console.log(values);
+                    }
+                }
+            > */}
+                <ProFormText name="name" label="名字" rules={
+                    [
+                        {
+                            required: true,
+                            message: '请输入名字',
+                        }
+                    ]
+                }/>
+                <ProFormText name="desc" label="简介" />
+                <ProFormText name="content" label="内容" />
+                <ProFormText name="img" label="图片" />
+            {/* </ProForm> */}
+        </ModalForm>
         <ProTable
+            actionRef={actionRef}
             rowKey="id"
             columns={column}
             request={loadDataAPI}
+            pagination={{
+                pageSize: 10
+            }}
             headerTitle={
                 <Button 
                 type="primary" 
