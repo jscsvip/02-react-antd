@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType } from '@ant-design/pro-components';
-import { loadDataAPI, addModelAPI } from '@/services/article-categories';
-import { Button, message, Popconfirm, Space } from 'antd';
+import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType, ProFormTextArea } from '@ant-design/pro-components';
+import { loadDataAPI, addModelAPI, delByIdAPI } from '@/services/article-categories';
+import { Button, message, Popconfirm, Space, Image } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 type DataType = {
@@ -54,7 +54,12 @@ function ArticleCategories() {
             dataIndex: 'img',
             hideInSearch: true,
             render: (text) => {
-                return <img src={text as string} alt="" width={100} />
+                console.log(text);
+                if (text==='-') {
+                    return <span>{text}</span>
+                }else{
+                    return <Image src={text as string} alt="" width={100} height={100} />
+                }
             }
         },
         {
@@ -65,8 +70,14 @@ function ArticleCategories() {
                     <Button type="primary" icon={<EditOutlined/>} size='small'>编辑</Button>
                     <Popconfirm
                         title="确认删除?"
-                        onConfirm={() => {
+                        onConfirm={async () => {
                             console.log(record);
+                            await delByIdAPI(record.id).then((res) => {
+                                console.log(res);
+                                message.success('删除成功');
+                                // 刷新表格
+                                actionRef.current?.reload();
+                            })
                         }}
                     >
                         <Button type="primary" icon={<DeleteOutlined/>} size='small' danger>删除</Button>
@@ -113,8 +124,8 @@ function ArticleCategories() {
                         }
                     ]
                 }/>
-                <ProFormText name="desc" label="简介" />
-                <ProFormText name="content" label="内容" />
+                <ProFormTextArea name="desc" label="简介" />
+                <ProFormTextArea name="content" label="内容" />
                 <ProFormText name="img" label="图片" />
             {/* </ProForm> */}
         </ModalForm>
