@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType, ProFormTextArea } from '@ant-design/pro-components';
-import { loadDataAPI, addModelAPI, delByIdAPI } from '@/services/article-categories';
+import { loadDataAPI, addModelAPI, delByIdAPI, editModelAPI, delManyByIdsAPI } from '@/services/article-categories';
 import { Button, message, Popconfirm, Space, Image } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -13,7 +13,17 @@ type DataType = {
 
 function ArticleCategories() {
     const actionRef = useRef<ActionType>(null); //用来绑定表单的内置事件
-    const [isShowEdit, setIsShowEdit] = React.useState(false);
+    const [myForm] = ProForm.useForm(); // 获取当前表单实例
+    const [currentId, setCurrentId] = useState('');   // 当前编辑的id,判断是新增还是编辑
+    const [isShowEdit, setIsShowEdit] = useState(false);
+    const [selectIds, setSelectIds] = useState<string>(''); // 选中的id
+    useEffect(() => {
+        // 关闭弹窗时重置表单
+        if (!isShowEdit) {
+            myForm.resetFields(); // 重置表单
+            setCurrentId('');
+        }
+    }, [isShowEdit])
     const column: ProColumns<DataType>[] = [
         {
             title: '序号',
@@ -54,7 +64,7 @@ function ArticleCategories() {
             dataIndex: 'img',
             hideInSearch: true,
             render: (text) => {
-                console.log(text);
+                // console.log(text);
                 if (text==='-') {
                     return <span>{text}</span>
                 }else{
@@ -67,13 +77,19 @@ function ArticleCategories() {
             hideInSearch: true,
             render: (text, record) => {
                 return <Space>
-                    <Button type="primary" icon={<EditOutlined/>} size='small'>编辑</Button>
+                    <Button type="primary" icon={<EditOutlined/>} size='small' onClick={
+                        () => {
+                            setIsShowEdit(true);
+                            setCurrentId(record.id);
+                            myForm.setFieldsValue(record); // 给表单赋值,回显数据
+                        }
+                    }>编辑</Button>
                     <Popconfirm
                         title="确认删除?"
                         onConfirm={async () => {
                             console.log(record);
                             await delByIdAPI(record.id).then((res) => {
-                                console.log(res);
+                                // console.log(res);
                                 message.success('删除成功');
                                 // 刷新表格
                                 actionRef.current?.reload();
@@ -88,6 +104,7 @@ function ArticleCategories() {
     ]
     return <PageContainer>
         <ModalForm title="编辑" 
+            form={myForm}
             open={isShowEdit}
             onOpenChange={setIsShowEdit}
             modalProps={{
@@ -97,14 +114,19 @@ function ArticleCategories() {
             }}
             onFinish={
                 async (values) => {
-                    console.log(values);
-                    addModelAPI(values).then((res) => {
-                        console.log(res);
-                        setIsShowEdit(false);
+                    // console.log(values);
+                    if(currentId) {
+                        await editModelAPI(currentId, values)
+                        message.success('编辑成功');
+                    }else{
+                        await addModelAPI(values)
                         message.success('添加成功');
+                    }
+                    setIsShowEdit(false);
+                        // message.success('添加成功');
                         // 刷新表格
-                        actionRef.current?.reload();
-                    });
+                    actionRef.current?.reload();
+                    
                 }
             }
         >
@@ -137,16 +159,50 @@ function ArticleCategories() {
             pagination={{
                 pageSize: 10
             }}
+            rowSelection={{
+                type: 'checkbox',
+                onChange: (selecteRowKeys) => {
+                    setSelectIds(selecteRowKeys.join(','));
+                    console.log(selecteRowKeys); // 选中的id
+                },
+            }}
             headerTitle={
+                <>
+                <Space>
                 <Button 
-                type="primary" 
-                icon={<PlusOutlined/>} 
-                size='small' 
-                onClick={
-                    () => {
-                        setIsShowEdit(true);
-                    }
-                }>新增</Button>
+                    type="primary" 
+                    icon={<PlusOutlined/>} 
+                    size='small' 
+                    onClick={
+                        () => {
+                            setIsShowEdit(true);
+                        }
+                    }>新增</Button>
+                    <Popconfirm  title="确认删除?"
+                        onConfirm={
+                            async () => {
+                                await delManyByIdsAPI(selectIds).then((res) => {
+                                    // console.log(res);
+                                    message.success('删除成功');
+                                    // 刷新表格
+                                    actionRef.current?.reload();
+                                })
+                            }
+                        }>
+                        <Button 
+                        type="primary" 
+                        icon={<DeleteOutlined/>} 
+                        size='small' 
+                        danger 
+                        style={{display:selectIds===''?'none':''}}
+                        >批量删除</Button>
+                    </Popconfirm>
+                
+                </Space>
+                    
+                    
+                </>
+                
             }
             toolBarRender={() => []}
             options={{

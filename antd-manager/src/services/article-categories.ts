@@ -107,7 +107,7 @@ export const delByIdAPI = async (
 export const delManyByIdsAPI = async (
   ids: string,
 ) => {
-  const res = await request(`/api/v1/admin/article_categories/delete_many?id=${ids}`, {
+  const res = await request(`/api/v1/admin/article_categories/delete_many?ids=${ids}`, {
     method: 'DELETE',
   });
   return res;
