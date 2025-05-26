@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType, ProFormTextArea } from '@ant-design/pro-components';
+import { PageContainer, ProTable, ProColumns,ModalForm,ProForm,ProFormText, ActionType, ProFormTextArea, ProFormItem } from '@ant-design/pro-components';
 import { loadDataAPI, addModelAPI, delByIdAPI, editModelAPI, delManyByIdsAPI } from '@/services/article-categories';
 import { Button, message, Popconfirm, Space, Image } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import MyUpload from '@/components/my-upload';
 
 type DataType = {
     id: string;
@@ -146,6 +147,9 @@ function ArticleCategories() {
                         }
                     ]
                 }/>
+                <ProFormItem label="图片">
+                    <MyUpload></MyUpload>
+                </ProFormItem>
                 <ProFormTextArea name="desc" label="简介" />
                 <ProFormTextArea name="content" label="内容" />
                 <ProFormText name="img" label="图片" />
