@@ -18,6 +18,7 @@ function ArticleCategories() {
     const [currentId, setCurrentId] = useState('');   // 当前编辑的id,判断是新增还是编辑
     const [isShowEdit, setIsShowEdit] = useState(false);
     const [selectIds, setSelectIds] = useState<string>(''); // 选中的id
+    const [imageUrl, setImageUrl] = useState<string>('');
     useEffect(() => {
         // 关闭弹窗时重置表单
         if (!isShowEdit) {
@@ -148,7 +149,10 @@ function ArticleCategories() {
                     ]
                 }/>
                 <ProFormItem label="图片">
-                    <MyUpload></MyUpload>
+                    <MyUpload
+                        imageUrl={imageUrl}
+                        setImageUrl={setImageUrl}
+                    ></MyUpload>
                 </ProFormItem>
                 <ProFormTextArea name="desc" label="简介" />
                 <ProFormTextArea name="content" label="内容" />
