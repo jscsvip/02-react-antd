@@ -4,6 +4,7 @@ import { loadDataAPI, addModelAPI, delByIdAPI, editModelAPI, delManyByIdsAPI } f
 import { Button, message, Popconfirm, Space, Image } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import MyUpload from '@/components/my-upload';
+import { dalImg } from '@/utils/tools';
 
 type DataType = {
     id: string;
@@ -24,6 +25,7 @@ function ArticleCategories() {
         if (!isShowEdit) {
             myForm.resetFields(); // 重置表单
             setCurrentId('');
+            setImageUrl('');
         }
     }, [isShowEdit])
     const column: ProColumns<DataType>[] = [
@@ -70,7 +72,7 @@ function ArticleCategories() {
                 if (text==='-') {
                     return <span>{text}</span>
                 }else{
-                    return <Image src={text as string} alt="" width={100} height={100} />
+                    return <Image src={dalImg(text as string)} alt="" width={100} height={100} />
                 }
             }
         },
@@ -83,6 +85,7 @@ function ArticleCategories() {
                         () => {
                             setIsShowEdit(true);
                             setCurrentId(record.id);
+                            setImageUrl(record.img);
                             myForm.setFieldsValue(record); // 给表单赋值,回显数据
                         }
                     }>编辑</Button>
@@ -118,10 +121,10 @@ function ArticleCategories() {
                 async (values) => {
                     // console.log(values);
                     if(currentId) {
-                        await editModelAPI(currentId, values)
+                        await editModelAPI(currentId, {...values,img:imageUrl})
                         message.success('编辑成功');
                     }else{
-                        await addModelAPI(values)
+                        await addModelAPI( {...values,img:imageUrl})
                         message.success('添加成功');
                     }
                     setIsShowEdit(false);
@@ -156,7 +159,7 @@ function ArticleCategories() {
                 </ProFormItem>
                 <ProFormTextArea name="desc" label="简介" />
                 <ProFormTextArea name="content" label="内容" />
-                <ProFormText name="img" label="图片" />
+                {/* <ProFormText name="img" label="图片" /> */}
             {/* </ProForm> */}
         </ModalForm>
         <ProTable
