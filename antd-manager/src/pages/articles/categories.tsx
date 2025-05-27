@@ -56,7 +56,7 @@ function ArticleCategories() {
         {
             title: '简介',
             dataIndex: 'desc',
-            hideInSearch: true,
+            // hideInSearch: true,
         },
         // {
         //     title: '内容',
@@ -215,7 +215,6 @@ function ArticleCategories() {
                 </>
                 
             }
-            toolBarRender={() => []}
             options={{
                 setting: {
                     listsHeight: 400,
@@ -224,7 +223,6 @@ function ArticleCategories() {
                 fullScreen: true,
                 reload: true,
             }}
-            search={false}
             dateFormatter="string"
         ></ProTable>
     </PageContainer>

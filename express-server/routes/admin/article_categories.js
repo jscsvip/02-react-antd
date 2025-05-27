@@ -15,13 +15,28 @@ const { parseData,encodePwd,comparePwd, getUserIdFromToken } = require('../../ut
  */
 router.get('/', async function(req,res,next){
     try{
-        const {page=1,per=10} = req.query;  //?page=2&per=10
+        const {page=1,per=10,name,desc} = req.query;  //?page=2&per=10
 
-        const count = await prisma.articleCategory.count(); //获取总条数
+        const count = await prisma.articleCategory.count({
+            where: {
+                name: {
+                    contains: name
+                },
+                desc: {
+                    contains: desc
+                },
+            }
+        }); //获取总条数
         const list = await prisma.articleCategory.findMany({
             skip: (page*1-1)*per,
             take: per*1,  //每页条数
             where: {
+                name: {
+                    contains: name
+                },
+                desc: {
+                    contains: desc
+                },
                 // is_delete: 0
             },
             orderBy: {
